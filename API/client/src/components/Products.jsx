@@ -97,49 +97,16 @@ const Products = () => {
 
     return (
       <>
-        <div className="buttons text-center py-5">
-          <button
-            className="btn btn-outline-dark btn-sm m-2"
-            onClick={() => setFilter(data)}
-          >
-            All
-          </button>
-          <button
-            className="btn btn-outline-dark btn-sm m-2"
-            onClick={() => filterProduct("men's clothing")}
-          >
-            Men's Clothing
-          </button>
-          <button
-            className="btn btn-outline-dark btn-sm m-2"
-            onClick={() => filterProduct("women's clothing")}
-          >
-            Women's Clothing
-          </button>
-          <button
-            className="btn btn-outline-dark btn-sm m-2"
-            onClick={() => filterProduct("jewelery")}
-          >
-            Jewelery
-          </button>
-          <button
-            className="btn btn-outline-dark btn-sm m-2"
-            onClick={() => filterProduct("electronics")}
-          >
-            Electronics
-          </button>
-        </div>
-
         {filter.map((product) => {
          var img ="/assets/DCS-2500T.JPG";
           return (
             <div
-              id={product.id}
-              key={product.id}
+              id={product.productID}
+              key={product.productID}
               className="row d-flex"
             >
               
-              <div className="card text-center h-100" key={product.id}>
+              <div className="card text-center h-100" key={product.productID}>
 
               <div  className="row d-flex">
               <div className="col-lg-3 col-md-12">
@@ -148,8 +115,7 @@ const Products = () => {
                                 data-mdb-ripple-color="light"
                               >
                                 <img
-                                  src={product.ImageUrl}
-                                  // className="w-100"
+                                  src={product.imageUrl}
                                   alt={product.title}
                                   width={100}
                                   height={75}

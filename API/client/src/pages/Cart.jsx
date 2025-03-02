@@ -106,7 +106,7 @@ const Cart = () => {
 
                     {state.map((item) => {
                       return (
-                        <div key={item.id}>
+                        <div key={item.productID}>
                           <div className="row d-flex align-items-center">
 
                             <div className="col-lg-3 col-md-12">
@@ -120,8 +120,7 @@ const Cart = () => {
                                           data-mdb-ripple-color="light"
                                         >
                                           <img
-                                            src={item.image}
-                                            // className="w-100"
+                                            src={item.imageUrl}
                                             alt={item.title}
                                             width={50}
                                             height={75}
