@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { addCart } from "../redux/action";
+import { useSelector,useDispatch } from "react-redux";
+import { addProduct } from "../redux/action";
 
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -13,12 +13,38 @@ const Products = () => {
   const [loading, setLoading] = useState(false);
   let componentMounted = true;
 
+  const state = useSelector((state) => state.handleCart);
+
   const dispatch = useDispatch();
 
-  const addProduct = (product) => {
-    dispatch(addCart(product));
+  const addAProduct = (product) => {
+
+   const isAvailable = validateStock(product)
+
+   if (!isAvailable){
+
+   toast.error("Quantity is greater than Available Stock");
+
+   }else{
+    toast.success("Added to cart");
+    dispatch(addProduct(product));
+  }
+
   };
 
+  const  validateStock = (product) =>{
+    const exist = state.find((x) => x.productID === product.productID);
+
+    if (exist) {
+
+     return  exist.qty + product.qty > product.availableStock ?  false : true ;
+
+    } else {
+      return   product.qty > product.availableStock ?  false : true ;
+
+    }
+
+  }
 
   const addQty = (id,q) =>{
     var newQty = q+1;
@@ -98,7 +124,6 @@ const Products = () => {
     return (
       <>
         {filter.map((product) => {
-         var img ="/assets/DCS-2500T.JPG";
           return (
             <div
               id={product.productID}
@@ -125,24 +150,33 @@ const Products = () => {
 
                 <div className="col-lg-3 col-md-12">
                 <div  className="row d-flex">
-                   <strong> {product.title}</strong>
+                   <strong> {`Title: ${product.title}` }</strong>
                  </div>
                  <div  className="row d-flex">
-                    {product.title}
+                    {`Code: ${product.productCode}`}
                  </div>
                  <div  className="row d-flex">
-                    {product.title}
+                    {`Description: ${product.smallDescription}`}
                  </div>
 
                 </div>
 
                 <div className="col-lg-3 col-md-6">
-                             <p className="text-start text-md-center">
-                                <strong>
-                                   {product.price}
-                                </strong>
-                              </p>
-                            </div>
+                  <div  className="row d-flex">
+                              <p className="text-start text-md-center">
+                                  <strong>
+                                    {product.price }
+                                  </strong>
+                                </p>
+                  </div>
+                  <div  className="row d-flex">
+                      <p className="text-start text-md-center">
+                          <strong>
+                            { `Available Stock: ${product.availableStock}`}
+                          </strong>
+                        </p>
+                  </div>
+                </div>
 
                             <div className="col-lg-3 col-md-12">
                               <div
@@ -179,8 +213,8 @@ const Products = () => {
                   <button
                     className="btn btn-dark m-1"
                     onClick={() => {
-                      toast.success("Added to cart");
-                      addProduct(product);
+                     
+                      addAProduct(product);
                     }}
                   >
                     Add to Cart

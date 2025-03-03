@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { Navbar } from "../components";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { clearCart } from "../redux/action";
+
+import toast from "react-hot-toast";
 const Checkout = () => {
   const state = useSelector((state) => state.handleCart);
+  const dispatch = useDispatch();
+  const [customerData, setCustomerData] = useState({
+    fullName: '',
+    email: '',
+    address: ''
+  });
 
   const EmptyCart = () => {
     return (
@@ -30,6 +39,47 @@ const Checkout = () => {
     state.map((item) => {
       return (totalItems += item.qty);
     });
+
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+
+      // Create the order data object
+      const orderData = {
+        Customer: {
+          fullName: customerData.fullName,
+          email: customerData.email,
+          address: customerData.address,
+        },
+        OrderItems: state.map(item => ({
+          productId: item.productID,
+          quantity: item.qty,
+        }))
+      };
+
+      try {
+        // Make the POST request to create the order
+        const response = await fetch("http://localhost:5270/api/Orders", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(orderData),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to create order");
+        }
+
+        const result = await response.json();
+            dispatch(clearCart(null));
+        toast.success("Order created successfully!");
+        console.log(result); // Handle the response from the API
+      } catch (error) {
+        console.error("Error:", error);
+        toast.error("An error occurred while creating the order.");
+      }
+    };
+
     return (
       <>
         <div className="container py-5">
@@ -44,13 +94,12 @@ const Checkout = () => {
                     <li className="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                       Products ({totalItems})<span>${Math.round(subtotal)}</span>
                     </li>
-                  
                     <li className="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                       <div>
                         <strong>Total amount</strong>
                       </div>
                       <span>
-                        <strong>${Math.round(subtotal )}</strong>
+                        <strong>${Math.round(subtotal)}</strong>
                       </span>
                     </li>
                   </ul>
@@ -63,11 +112,10 @@ const Checkout = () => {
                   <h4 className="mb-0">Customer</h4>
                 </div>
                 <div className="card-body">
-                  <form className="needs-validation" novalidate>
+                  <form className="needs-validation" onSubmit={handleSubmit} novalidate>
                     <div className="row g-3">
-
                       <div className="col-sm-6 my-1">
-                        <label for="lastName" className="form-label">
+                        <label htmlFor="lastName" className="form-label">
                           Full name
                         </label>
                         <input
@@ -75,6 +123,8 @@ const Checkout = () => {
                           className="form-control"
                           id="lastName"
                           placeholder=""
+                          value={customerData.fullName}
+                          onChange={(e) => setCustomerData({ ...customerData, fullName: e.target.value })}
                           required
                         />
                         <div className="invalid-feedback">
@@ -83,7 +133,7 @@ const Checkout = () => {
                       </div>
 
                       <div className="col-12 my-1">
-                        <label for="email" className="form-label">
+                        <label htmlFor="email" className="form-label">
                           Email
                         </label>
                         <input
@@ -91,16 +141,17 @@ const Checkout = () => {
                           className="form-control"
                           id="email"
                           placeholder="you@example.com"
+                          value={customerData.email}
+                          onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })}
                           required
                         />
                         <div className="invalid-feedback">
-                          Please enter a valid email address for shipping
-                          updates.
+                          Please enter a valid email address for shipping updates.
                         </div>
                       </div>
 
                       <div className="col-12 my-1">
-                        <label for="address" className="form-label">
+                        <label htmlFor="address" className="form-label">
                           Address
                         </label>
                         <input
@@ -108,22 +159,19 @@ const Checkout = () => {
                           className="form-control"
                           id="address"
                           placeholder="1234 Main St"
+                          value={customerData.address}
+                          onChange={(e) => setCustomerData({ ...customerData, address: e.target.value })}
                           required
                         />
                         <div className="invalid-feedback">
                           Please enter your shipping address.
                         </div>
                       </div>
-
-
                     </div>
 
                     <hr className="my-4" />
 
-                    <button
-                      className="w-100 btn btn-primary "
-                      type="submit" disabled
-                    >
+                    <button className="w-100 btn btn-primary" type="submit">
                       Continue to checkout
                     </button>
                   </form>
@@ -135,6 +183,7 @@ const Checkout = () => {
       </>
     );
   };
+
   return (
     <>
       <Navbar />

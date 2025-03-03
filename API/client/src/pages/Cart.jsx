@@ -1,7 +1,7 @@
 import React from "react";
 import {  Navbar } from "../components";
 import { useSelector, useDispatch } from "react-redux";
-import { addCart, delCart } from "../redux/action";
+import { addCart, delCart ,delProduct } from "../redux/action";
 import { Link } from "react-router-dom";
 
 const Cart = () => {
@@ -26,9 +26,17 @@ const Cart = () => {
   const addItem = (product) => {
     dispatch(addCart(product));
   };
+
   const removeItem = (product) => {
     dispatch(delCart(product));
   };
+
+  const removeProduct = (product) => {
+    dispatch(delProduct(product));
+  };
+
+
+
 
   const ShowCart = () => {
     let subtotal = 0;
@@ -52,7 +60,7 @@ const Cart = () => {
 
                     <div className="col-lg-3 col-md-3">
 
-                    <h5 className="mb-0">Item List</h5>
+                    <h5 className="mb-0">Cart Product List</h5>
                     </div>
                  
 
@@ -132,14 +140,30 @@ const Cart = () => {
                               <div className="col-lg-6 col-md-12">
                             <div className="row d-flex">
                                 <p>
-                                  <strong>{item.title}</strong>
+                                  <strong> Title: {item.title}</strong>
+                                </p>
+                              
+                            </div>
+                            <div className="row d-flex">
+                                <p>
+                                  <strong> Code: {item.productCode}</strong>
                                 </p>
                               
                             </div>
                             </div>
 
                             </div>
-
+                            <div className="row d-flex">
+                               <button
+                                  className="btn btn-dark m-1"
+                                  onClick={() => {
+                                    removeProduct(item);
+                                  }}
+                                >
+                                  <i class="fa-solid fa-trash"></i>
+                                  Delete
+                                </button>
+                             </div> 
 
                             </div>
 
@@ -185,7 +209,7 @@ const Cart = () => {
                             <div className="col-lg-3 col-md-12">
                             <div className="row d-flex">
                                 <p>
-                                  <strong>{ item.qty * item.price}</strong>
+                                  <strong> $ { item.qty * item.price}</strong>
                                 </p>
                               
                             </div>
@@ -243,7 +267,7 @@ const Cart = () => {
     <>
       <Navbar />
       <div className="container my-3 py-3">
-        <h1 className="text-center">Cart</h1>
+        <h1 className="text-center">My Shopping Cart</h1>
         <hr />
         {state.length > 0 ? <ShowCart /> : <EmptyCart />}
       </div>

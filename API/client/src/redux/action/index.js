@@ -13,3 +13,27 @@ export const delCart = (product) =>{
         payload:product
     }
 }
+
+// For Add A Product
+export const addProduct = (product) =>{
+    return {
+        type:"ADDPRODUCT",
+        payload:product
+    }
+}
+
+// For Delete a Product
+export const delProduct = (product) =>{
+    return {
+        type:"DELPRODUCT",
+        payload:product
+    }
+}
+
+export const clearCart = (product) =>{
+    return {
+        type:"CLEARCART",
+        payload:null
+    }
+}
+

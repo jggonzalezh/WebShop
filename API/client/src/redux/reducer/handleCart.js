@@ -10,8 +10,8 @@ const handleCart = (state = getInitialCart(), action) => {
 
   switch (action.type) {
     case "ADDITEM":
-      // Check if product already in cart
       const exist = state.find((x) => x.productID === product.productID);
+      // Check if product already in cart
       if (exist) {
         // Increase the quantity
         updatedCart = state.map((x) =>
@@ -19,7 +19,8 @@ const handleCart = (state = getInitialCart(), action) => {
         );
       } else {
         updatedCart = [...state, { ...product }];
-      }
+      } 
+     
       // Update localStorage
       localStorage.setItem("cart", JSON.stringify(updatedCart));
       return updatedCart;
@@ -36,6 +37,32 @@ const handleCart = (state = getInitialCart(), action) => {
       // Update localStorage
       localStorage.setItem("cart", JSON.stringify(updatedCart));
       return updatedCart;
+      case "ADDPRODUCT":
+      // Check if product already in cart
+      const exist3 = state.find((x) => x.productID === product.productID);
+      if (exist3) {
+        // Increase the quantity
+        updatedCart = state.map((x) =>
+          x.productID === product.productID ? { ...x, qty: x.qty + product.qty } : x
+        );
+      } else {
+        updatedCart = [...state, { ...product }];
+      }
+      // Update localStorage
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      return updatedCart;
+      case "DELPRODUCT":
+        const exist4 = state.find((x) => x.productID === product.productID);
+          updatedCart = state.filter((x) => x.productID !== exist4.productID);
+  
+        // Update localStorage
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        return updatedCart;
+
+        case "CLEARCART":
+          // Update localStorage
+          localStorage.clear();
+          return [];
 
     default:
       return state;
